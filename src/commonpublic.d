@@ -10,11 +10,12 @@ alias float Percent;
 enum ItemType
 {
 	Unknown = 0,
+	Container,
 	Key,
 	Magicfield,
 	Depot,
 	Mailbox,
-	Thrashholder,
+	Trashholder,
 	Teleport,
 	Door,
 	Bed,

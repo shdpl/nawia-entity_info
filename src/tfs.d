@@ -36,7 +36,7 @@ extern(C)
 		void function(ItemId item, ItemWareId id) onItemHasWareId = null;
 		void function(ItemId item, float price) onItemHasPrice = null;
 		void function(ItemId item, bool force) onItemHasForcedSerialization = null;
-		void function(ItemId item, bool leveldoor) onItemIsLevelDoor = null;
+		void function(ItemId item, uint leveldoor) onItemIsLevelDoor = null;
 		void function(ItemId item, bool specialdoor) onItemIsSpecialDoor = null;
 		void function(ItemId item, WeaponType type) onItemHasWeaponType = null;
 		void function(ItemId item, ItemSlot type) onItemHasSlotType = null;
@@ -99,7 +99,7 @@ void tfsParseItemsXml(ref TfsItemsXmlParser args)
 		//item id="1492" name="" editorsuffix=" (Non PvP)"
 			//attribute key="type" value="magicfield"
 		auto str = to!string(args.content);
-		check(str);
+		//check(str);
 		auto xml = new DocumentParser(str);
 		xml.onStartTag["item"] = (ElementParser xml)
 		{
@@ -225,7 +225,7 @@ void tfsParseItemsXml(ref TfsItemsXmlParser args)
 						callbackIds(args.onItemHasClientId, ids,to!ItemClientId(value));
 					break;
 					case "cache":
-						callbackIds(args.onItemIsCacheable, ids, to!bool(value));
+						callbackIds(args.onItemIsCacheable, ids, tfsBool(value));
 					break;
 					case "wareid":
 						callbackIds(args.onItemHasWareId, ids, to!ItemWareId(value));
@@ -236,13 +236,13 @@ void tfsParseItemsXml(ref TfsItemsXmlParser args)
 					case "forceserialize":
 					case "forcesave":
 					case "forceserialization":
-						callbackIds(args.onItemHasForcedSerialization, ids, to!bool(value));
+						callbackIds(args.onItemHasForcedSerialization, ids, tfsBool(value));
 					break;
 					case "leveldoor":
-						callbackIds(args.onItemIsLevelDoor, ids, to!bool(value));
+						callbackIds(args.onItemIsLevelDoor, ids, to!uint(value));
 					break;
 					case "specialdoor":
-						callbackIds(args.onItemIsSpecialDoor, ids, to!bool(value));
+						callbackIds(args.onItemIsSpecialDoor, ids, tfsBool(value));
 					break;
 					case "weapontype":
 						callbackIds(args.onItemHasWeaponType, ids, to!WeaponType(value.capitalize));
@@ -263,7 +263,7 @@ void tfsParseItemsXml(ref TfsItemsXmlParser args)
 						callbackIds(args.onItemHasShootRange, ids, to!uint(value));
 					break;
 					case "stopduration":
-						callbackIds(args.onItemHasStopDuration, ids, to!bool(value));
+						callbackIds(args.onItemHasStopDuration, ids, tfsBool(value));
 					break;
 					case "decayto":
 						callbackIds(args.onItemHasDecayTo, ids, to!ItemId(value));
@@ -278,19 +278,19 @@ void tfsParseItemsXml(ref TfsItemsXmlParser args)
 						callbackIds(args.onItemHasDuration, ids, to!uint(value));
 					break;
 					case "showduration":
-						callbackIds(args.onItemShowDuration, ids, to!bool(value));
+						callbackIds(args.onItemShowDuration, ids, tfsBool(value));
 					break;
 					case "charges":
 						callbackIds(args.onItemHasCharges, ids, to!uint(value));
 					break;
 					case "showattributes":
-						callbackIds(args.onItemShowAttributes, ids, to!bool(value));
+						callbackIds(args.onItemShowAttributes, ids, tfsBool(value));
 					break;
 					case "breakchance":
 						callbackIds(args.onItemHasBreakChance, ids, to!Percent(value));
 					break;
 					default:
-						enforce(false);
+						//enforce(false,text(""));
 				}
 			};
 			xml.parse();

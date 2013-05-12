@@ -1,5 +1,8 @@
 module commonprivate;
 private {
+	import std.string : text,toLower;
+	import std.exception : enforce;
+
 	import commonpublic;
 }
 
@@ -21,4 +24,23 @@ void callbackIds(FuncType,Args...)(FuncType func, ItemId[] ids, Args args)
 			func(id,args);
 		}
 	}
+}
+
+
+bool tfsBool(string value)
+{
+	switch( value.toLower )
+	{
+		case "0":
+		case "false":
+			return false;
+		break;
+		case "1":
+		case "true":
+			return true;
+		break;
+		default:
+			enforce(false,text("Could not parse ",value," as bool."));
+	}
+	assert(0);
 }
