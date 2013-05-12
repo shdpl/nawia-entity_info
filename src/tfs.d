@@ -52,7 +52,14 @@ extern(C)
 		void function(ItemId item, bool show) onItemShowDuration = null;
 		void function(ItemId item, uint charges) onItemHasCharges = null;
 		void function(ItemId item, bool show) onItemShowAttributes = null;
-		void function(ItemId item, Percent value) onItemHasBreakChance = null;
+		void function(ItemId item, UPercent value) onItemHasBreakChance = null;
+		void function(ItemId item, AmmoAction action) onItemHasAmmoAction = null;
+		void function(ItemId item, Percent value) onItemHasHitChance = null;
+		void function(ItemId item, UPercent value) onItemHasMaxHitChance = null;
+		void function(ItemId item, bool dualwield) onItemIsDualwield = null;
+		void function(ItemId item, bool preventloss) onItemHasPreventLoss = null;
+		void function(ItemId item, bool preventdrop) onItemHasPreventDrop = null;
+		void function(ItemId item, bool invisible) onItemHasInvisible = null;
 
 //		void function(ItemId item, CorpseType type) onItemHasCorpseType = null;
 	}
@@ -248,7 +255,7 @@ void tfsParseItemsXml(ref TfsItemsXmlParser args)
 						callbackIds(args.onItemHasWeaponType, ids, to!WeaponType(value.capitalize));
 					break;
 					case "slottype":
-//						callbackIds(args.onItemHasSlotType, ids, to!ItemSlot(value.filter!q{a!='-'}.array.capitalize));
+						callbackIds(args.onItemHasSlotType, ids, to!ItemSlot(value.filter!q{a!='-'}.array.capitalize));
 					break;
 					case "ammotype":
 						callbackIds(args.onItemHasAmmunitionType, ids, to!AmmunitionType(value.capitalize));
@@ -288,6 +295,27 @@ void tfsParseItemsXml(ref TfsItemsXmlParser args)
 					break;
 					case "breakchance":
 						callbackIds(args.onItemHasBreakChance, ids, to!Percent(value));
+					break;
+					case "ammoaction":
+						callbackIds(args.onItemHasAmmoAction, ids, to!AmmoAction(value.filter!q{(a!='-')&&(a!=' ')}.array.capitalize));
+					break;
+					case "hitchance":
+						callbackIds(args.onItemHasHitChance, ids, to!Percent(value));
+					break;
+					case "maxhitchance":
+						callbackIds(args.onItemHasMaxHitChance, ids, to!Percent(value));
+					break;
+					case "dualwield":
+						callbackIds(args.onItemIsDualwield, ids, to!bool(value));
+					break;
+					case "preventloss":
+						callbackIds(args.onItemHasPreventLoss, ids, to!bool(value));
+					break;
+					case "preventdrop":
+						callbackIds(args.onItemHasPreventDrop, ids, to!bool(value));
+					break;
+					case "invisible":
+						callbackIds(args.onItemHasInvisible, ids, to!bool(value));
 					break;
 					default:
 						//enforce(false,text(""));

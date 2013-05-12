@@ -6,6 +6,7 @@ alias ushort ItemUid;
 alias uint ItemClientId;
 alias uint ItemWareId;
 alias float Percent;
+alias float UPercent;
 
 enum ItemType
 {
@@ -52,7 +53,7 @@ enum ItemSlot
 }
 enum AmmunitionType
 {
-	Unknown,
+	Unknown = 0,
 	Spear,
 	Arrow,
 	Poisonarrow,
@@ -211,4 +212,13 @@ enum MagicEffect
 }
 
 
-enum EdgeAlignment { Horizontal, Vertical };
+enum EdgeAlignment { Horizontal, Vertical }
+
+enum AmmoAction 
+{
+	Unknow = 0,
+	Removecount,
+	Removecharge,
+	Move,
+	Moveback,
+};
