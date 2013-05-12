@@ -306,16 +306,16 @@ void tfsParseItemsXml(ref TfsItemsXmlParser args)
 						callbackIds(args.onItemHasMaxHitChance, ids, to!Percent(value));
 					break;
 					case "dualwield":
-						callbackIds(args.onItemIsDualwield, ids, to!bool(value));
+						callbackIds(args.onItemIsDualwield, ids, tfsBool(value));
 					break;
 					case "preventloss":
-						callbackIds(args.onItemHasPreventLoss, ids, to!bool(value));
+						callbackIds(args.onItemHasPreventLoss, ids, tfsBool(value));
 					break;
 					case "preventdrop":
-						callbackIds(args.onItemHasPreventDrop, ids, to!bool(value));
+						callbackIds(args.onItemHasPreventDrop, ids, tfsBool(value));
 					break;
 					case "invisible":
-						callbackIds(args.onItemHasInvisible, ids, to!bool(value));
+						callbackIds(args.onItemHasInvisible, ids, tfsBool(value));
 					break;
 					default:
 						//enforce(false,text(""));
