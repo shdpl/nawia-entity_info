@@ -52,6 +52,7 @@ extern(C)
 		void function(ItemId item, bool show) onItemShowDuration = null;
 		void function(ItemId item, uint charges) onItemHasCharges = null;
 		void function(ItemId item, bool show) onItemShowAttributes = null;
+		void function(ItemId item, Percent value) onItemHasBreakChance = null;
 
 //		void function(ItemId item, CorpseType type) onItemHasCorpseType = null;
 	}
@@ -284,6 +285,9 @@ void tfsParseItemsXml(ref TfsItemsXmlParser args)
 					break;
 					case "showattributes":
 						callbackIds(args.onItemShowAttributes, ids, to!bool(value));
+					break;
+					case "breakchance":
+						callbackIds(args.onItemHasBreakChance, ids, to!Percent(value));
 					break;
 					default:
 						enforce(false);

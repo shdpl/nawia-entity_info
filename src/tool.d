@@ -4,6 +4,9 @@ import rme;
 import std.stdio;
 import std.conv;
 import std.range;
+import std.string;
+import std.file;
+import tfs;
 
 string[][string] brushTypes;
 string[][ItemId] edges;
@@ -28,9 +31,9 @@ brush_t[][ItemId] item_makes_tileset;
 
 void main()
 {
-	RmeParser pd;
+/*	RmeParser pd;
 	
-	pd.data_path = r"/media/shd/4C244CF9244CE812/Users/shd/Documents/src/nawia-content/rme/data/954";
+	pd.data_path = r"C:\Users\Marcin\Documents\GitHub\nawia-private\rme\data\954";
 	
 // === different types of tiles edges
 	pd.border.isEdge = (ItemId item,edge_t edge)
@@ -155,7 +158,7 @@ void main()
 	brush_tt[][tileset_t] makes_brushtype;
 	tileset_t[][brush_t] brush_makes_tileset;
 	brush_t[][ItemId] item_makes_tileset;
-*/
+"""
 	
 	foreach( item,brush; is_brush )
 	{
@@ -174,4 +177,8 @@ void main()
 		writeln(k,": ",v);
 	}
 	writeln("~~~ Done ~~~");
+*/
+TfsItemsXmlParser params;
+params.content = readText(r"C:\Users\Marcin\Documents\GitHub\nawia-private\data\items\items.xml").toStringz;
+tfsParseItemsXml(params);
 }

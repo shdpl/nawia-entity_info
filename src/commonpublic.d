@@ -5,6 +5,7 @@ alias ushort ItemAid;
 alias ushort ItemUid;
 alias uint ItemClientId;
 alias uint ItemWareId;
+alias float Percent;
 
 enum ItemType
 {
