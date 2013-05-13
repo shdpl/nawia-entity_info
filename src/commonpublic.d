@@ -212,13 +212,41 @@ enum MagicEffect
 }
 
 
-enum EdgeAlignment { Horizontal, Vertical }
-
-enum AmmoAction 
+enum EdgeAlignment
 {
-	Unknow = 0,
+	Horizontal,
+	Vertical
+}
+
+enum AmmoAction
+{
+	Unknown = 0,
 	Removecount,
 	Removecharge,
 	Move,
 	Moveback,
 };
+
+enum CombatCondition
+{ // subset of combatTypeNames (not the same of)
+	Physical,
+	Energy,
+	Earth,
+	Fire,
+	Drown,
+	Ice,
+	Holy,
+	Death,
+}
+
+enum Direction {
+	Undefined = 0,
+	North,
+	East,
+	South,
+	West,
+	Southwest,
+	Southeast,
+	Northwest,
+	Northeast,
+}

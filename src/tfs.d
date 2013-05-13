@@ -30,9 +30,10 @@ extern(C)
 		void function(ItemId item, cstring subtype) onItemHasSubtype = null;
 		void function(ItemId item, cstring article) onItemHasArticle = null;
 		void function(ItemId item, cstring plural) onItemHasPlural = null;
-		void function(ItemId item, commonpublic.ItemType type) onItemHasType = null;
+		void function(ItemId item, commonpublic.ItemType type) onItemHasType = null; //?
 		void function(ItemId item, ItemClientId item) onItemHasClientId = null;
 		void function(ItemId item, bool cacheable) onItemIsCacheable = null;
+		// TODO: missing
 		void function(ItemId item, ItemWareId id) onItemHasWareId = null;
 		void function(ItemId item, float price) onItemHasPrice = null;
 		void function(ItemId item, bool force) onItemHasForcedSerialization = null;
@@ -60,6 +61,86 @@ extern(C)
 		void function(ItemId item, bool preventloss) onItemHasPreventLoss = null;
 		void function(ItemId item, bool preventdrop) onItemHasPreventDrop = null;
 		void function(ItemId item, bool invisible) onItemHasInvisible = null;
+		void function(ItemId id, int modifier) onItemHasSpeedModifier = null;
+
+		void function(ItemId id, int gain) onItemHasHealthGain = null;
+		void function(ItemId id, uint ticks) onItemHasHealthTicks = null;
+
+		void function(ItemId id, int gain) onItemHasManaGain = null;
+		void function(ItemId id, int ticks) onItemHasManaTicks = null;
+
+		void function(ItemId id, bool has) onItemActivatesManaShield = null;
+
+		void function(ItemId id, int level) onItemRequiresSword = null;
+		void function(ItemId id, int level) onItemRequiresAxe = null;
+		void function(ItemId id, int level) onItemRequiresClub = null;
+		void function(ItemId id, int level) onItemRequiresDistance = null;
+		void function(ItemId id, int level) onItemRequiresFishing = null;
+		void function(ItemId id, int level) onItemRequiresShielding = null;
+		void function(ItemId id, int level) onItemRequiresFist = null;
+
+		void function(ItemId id, int points) onItemModifiesMagicGainPoints = null;
+		void function(ItemId id, Percent modifier) onItemModifiesMagicGainPercent = null;
+
+		void function(ItemId id, int points) onItemModifiesMagicStrengthPoints = null;
+		void function(ItemId id, Percent modifier) onItemModifiesMagicStrengthPercent = null;
+
+		void function(ItemId id, int points) onItemModifiesMaxHealthPoints = null;
+		void function(ItemId id, Percent modifier) onItemModifiesMaxHealthPercent = null;
+
+		void function(ItemId id, int points) onItemModifiesMaxManaPoints = null;
+		void function(ItemId id, Percent modifier) onItemModifiesMaxManaPercent = null;
+
+		void function(ItemId id, int points) onItemModifiesMaxSoulPoints = null;
+		void function(ItemId id, Percent modifier) onItemModifiesMaxSoulPercent = null;
+
+		void function(ItemId id, int points) onItemModifiesHealingStrengthPoints = null;
+		void function(ItemId id, Percent modifier) onItemModifiesHealingStrengthPercent = null;
+
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbFieldEnergyPercent = null;
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbFieldFirePercent = null;
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbFieldEarthPercent = null;
+
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbAllPercent = null;
+
+		/// energy + fire + earth + ice
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbElementPercent = null;
+		/// energy + fire + earth + ice + holy + death
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbMagicPercent = null;
+
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbEnergyPercent = null;
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbFirePercent = null;
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbEarthPercent = null;
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbIcePercent = null;
+
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbHolyPercent = null;
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbDeathPercent = null;
+
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbDrainLifePercent = null;
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbDrainManaPercent = null;
+
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbDrownPercent = null;
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbPhysicalPercent = null;
+
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbHealingPercent = null;
+		void function(ItemId id, Percent modifier) onItemModifiesAbsorbUndefinedPercent = null;
+
+		//TODO: reflect
+		//
+		//TODO: suppress
+
+		void function(ItemId id, Percent modifier) onItemAppliesCombatCondition = null;
+
+		//TODO: element (which deals elemental damage)
+
+		void function(ItemId id, bool replaceable) onItemIsReplaceable = null;
+		void function(ItemId id, Direction which) onItemHasPartnerDirection = null;
+
+		void function(ItemId id, ItemId to) onItemHasTransformFemaleOnUse = null;
+		void function(ItemId id, ItemId to) onItemHasTransformMaleOnUse = null;
+		void function(ItemId id, ItemId to) onItemHasTransformOnUse = null;
+
+		void function(ItemId id, bool has) onItemHasWalkstackPosition = null;
 
 //		void function(ItemId item, CorpseType type) onItemHasCorpseType = null;
 	}
@@ -316,6 +397,182 @@ void tfsParseItemsXml(ref TfsItemsXmlParser args)
 					break;
 					case "invisible":
 						callbackIds(args.onItemHasInvisible, ids, tfsBool(value));
+					break;
+					case "speed":
+						callbackIds(args.onItemHasSpeedModifier, ids, to!int(value));
+					break;
+					case "healthgain":
+						callbackIds(args.onItemHasHealthGain, ids, to!int(value));
+					break;
+					case "healthticks":
+						callbackIds(args.onItemHasHealthTicks, ids, to!uint(value));
+					break;
+					case "managain":
+						callbackIds(args.onItemHasManaGain, ids, to!int(value));
+					break;
+					case "manaticks":
+						callbackIds(args.onItemHasManaTicks, ids, to!uint(value));
+					break;
+					case "manashield":
+						callbackIds(args.onItemActivatesManaShield, ids, tfsBool(value));
+					break;
+					case "skillsword":
+						callbackIds(args.onItemRequiresSword, ids, to!int(value));
+					break;
+					case "skillaxe":
+						callbackIds(args.onItemRequiresAxe, ids, to!int(value));
+					break;
+					case "skillclub":
+						callbackIds(args.onItemRequiresClub, ids, to!int(value));
+					break;
+					case "skilldist":
+						callbackIds(args.onItemRequiresDistance, ids, to!int(value));
+					break;
+					case "skillfish":
+						callbackIds(args.onItemRequiresFishing, ids, to!int(value));
+					break;
+					case "skillshield":
+						callbackIds(args.onItemRequiresShielding, ids, to!int(value));
+					break;
+					case "skillfist":
+						callbackIds(args.onItemRequiresFist, ids, to!int(value));
+					break;
+					case "maxhealthpoints":
+						callbackIds(args.onItemModifiesMaxHealthPoints, ids, to!int(value));
+					break;
+					case "maxhealthpercent":
+						callbackIds(args.onItemModifiesMaxHealthPercent, ids, to!Percent(value));
+					break;
+					case "maxmanapoints":
+						callbackIds(args.onItemModifiesMaxManaPoints, ids, to!int(value));
+					break;
+					case "maxmanapercent":
+						callbackIds(args.onItemModifiesMaxManaPercent, ids, to!Percent(value));
+					break;
+					case "soulpoints":
+						callbackIds(args.onItemModifiesMaxSoulPoints, ids, to!int(value));
+					break;
+					case "soulpercent":
+						callbackIds(args.onItemModifiesMaxSoulPercent, ids, to!Percent(value));
+					break;
+					case "magiclevelpoints":
+						callbackIds(args.onItemModifiesMagicGainPoints, ids, to!int(value));
+					break;
+					case "magiclevelpercent":
+						callbackIds(args.onItemModifiesMagicGainPercent, ids, to!Percent(value));
+					break;
+					case "magicvalue":
+						callbackIds(args.onItemModifiesMagicStrengthPoints, ids, to!int(value));
+					break;
+					case "magicpercent":
+						callbackIds(args.onItemModifiesMagicStrengthPercent, ids, to!Percent(value));
+					break;
+					case "increasehealingvalue":
+						callbackIds(args.onItemModifiesHealingStrengthPoints, ids, to!int(value));
+					break;
+					case "increasehealingpercent":
+						callbackIds(args.onItemModifiesHealingStrengthPercent, ids, to!Percent(value));
+					break;
+					case "fieldabsorbpercentenergy":
+						callbackIds(args.onItemModifiesAbsorbFieldEnergyPercent, ids, to!Percent(value));
+					break;
+					case "fieldabsorbpercentfire":
+						callbackIds(args.onItemModifiesAbsorbFieldFirePercent, ids, to!Percent(value));
+					break;
+					case "fieldabsorbpercentearth":
+						callbackIds(args.onItemModifiesAbsorbFieldEarthPercent, ids, to!Percent(value));
+					break;
+					case "absorbpercentall":
+						callbackIds(args.onItemModifiesAbsorbAllPercent, ids, to!Percent(value));
+					break;
+					case "absorbpercentelements":
+						callbackIds(args.onItemModifiesAbsorbElementPercent, ids, to!Percent(value));
+					break;
+					case "absorbpercentmagic":
+						callbackIds(args.onItemModifiesAbsorbMagicPercent, ids, to!Percent(value));
+					break;
+					case "absorbpercentenergy":
+						callbackIds(args.onItemModifiesAbsorbEnergyPercent, ids, to!Percent(value));
+					break;
+					case "absorbpercentfire":
+						callbackIds(args.onItemModifiesAbsorbFirePercent, ids, to!Percent(value));
+					break;
+					case "absorbpercentearth":
+						callbackIds(args.onItemModifiesAbsorbEarthPercent, ids, to!Percent(value));
+					break;
+					case "absorbpercentice":
+						callbackIds(args.onItemModifiesAbsorbIcePercent, ids, to!Percent(value));
+					break;
+					case "absorbpercentholy":
+						callbackIds(args.onItemModifiesAbsorbHolyPercent, ids, to!Percent(value));
+					break;
+					case "absorbpercentdeath":
+						callbackIds(args.onItemModifiesAbsorbDeathPercent, ids, to!Percent(value));
+					break;
+					case "absorbpercentlifedrain":
+						callbackIds(args.onItemModifiesAbsorbDrainLifePercent, ids, to!Percent(value));
+					break;
+					case "absorbpercentmanadrain":
+						callbackIds(args.onItemModifiesAbsorbDrainManaPercent, ids, to!Percent(value));
+					break;
+					case "absorbpercentdrown":
+						callbackIds(args.onItemModifiesAbsorbDrownPercent, ids, to!Percent(value));
+					break;
+					case "absorbpercentphysical":
+						callbackIds(args.onItemModifiesAbsorbPhysicalPercent, ids, to!Percent(value));
+					break;
+					case "absorbpercenthealing":
+						callbackIds(args.onItemModifiesAbsorbHealingPercent, ids, to!Percent(value));
+					break;
+					case "absorbpercentundefined":
+						callbackIds(args.onItemModifiesAbsorbUndefinedPercent, ids, to!Percent(value));
+					break;
+					case "field":
+						callbackIds(args.onItemAppliesCombatCondition, ids, to!CombatCondition(value.capitalize));
+						/*
+						xml.onStartTag["attributes"] = (ElementParser xml)
+						{
+							auto key = xml.tag.attr["key"];
+							auto value = xml.tag.attr["value"];
+							switch( key.toLower )
+							{
+								case "ticks":
+									//
+								break;
+								case "count":
+									//
+								break;
+								case "start":
+									//
+								break;
+								case "damage":
+									//
+								break;
+								default:
+							//		enforce(false, text("Unknown field attribute ",key));
+							}
+							//FIXME: buffer for passing as argument
+						};
+						xml.parse();
+						*/
+					break;
+					case "replaceable":
+						callbackIds(args.onItemIsReplaceable, ids, tfsBool(value));
+					break;
+					case "partnerdirection":
+						callbackIds(args.onItemHasPartnerDirection, ids, to!Direction(value.capitalize));
+					break;
+					case "maletransformto":
+						callbackIds(args.onItemHasTransformMaleOnUse, ids, to!ItemId(value));
+					break;
+					case "femaletransformto":
+						callbackIds(args.onItemHasTransformFemaleOnUse, ids, to!ItemId(value));
+					break;
+					case "transformto":
+						callbackIds(args.onItemHasTransformOnUse, ids, to!ItemId(value));
+					break;
+					case "walkstack":
+						callbackIds(args.onItemHasWalkstackPosition, ids, tfsBool(value));
 					break;
 					default:
 						//enforce(false,text(""));
