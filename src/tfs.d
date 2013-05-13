@@ -33,7 +33,38 @@ extern(C)
 		void function(ItemId item, commonpublic.ItemType type) onItemHasType = null; //?
 		void function(ItemId item, ItemClientId item) onItemHasClientId = null;
 		void function(ItemId item, bool cacheable) onItemIsCacheable = null;
-		// TODO: missing
+		void function(ItemId item, bool blocks) onItemBlocksSolid = null;
+		void function(ItemId item, bool blocks) onItemBlocksProjectile = null;
+		void function(ItemId item, bool blocks) onItemBlocksPathFind = null;
+		void function(ItemId item, uint strength) onItemHasLightLevel = null;
+		void function(ItemId item, uint color) onItemHasLightColor = null;
+		void function(ItemId item, cstring description) onItemHasLightDescription = null;
+		void function(ItemId item, cstring name) onItemHasRuneSpellName = null;
+		/// oz = weight/100
+		void function(ItemId item, uint weight) onItemHasWeight = null;
+		void function(ItemId item, bool show) onItemHasShowCount = null;
+		void function(ItemId item, int armor) onItemHasArmor = null;
+		void function(ItemId item, int defense) onItemHasDefense = null;
+		void function(ItemId item, int extradef) onItemHasExtraDefense = null;
+		void function(ItemId item, int attack) onItemHasAttack = null;
+		void function(ItemId item, int extraatk) onItemHasExtraAttack = null;
+		void function(ItemId item, int speed) onItemHasAttackSpeed = null;
+		void function(ItemId item, int rotate) onItemHasRotateTo = null;
+		void function(ItemId item, bool movable) onItemIsMovable = null;
+		void function(ItemId item, bool vertical) onItemIsVertical = null;
+		void function(ItemId item, bool horizontal) onItemIsHorizontal = null;
+		void function(ItemId item, bool pickupable) onItemIsPickupable = null;
+		void function(ItemId item, bool allow) onItemIsAllowedToPickUp = null;
+		void function(ItemId item, FloorChange change) onItemHasFloorChange = null;
+		void function(ItemId item, CorpseType type) onItemHasCorpseType = null;
+		void function(ItemId item, uint size) onItemHasContainerSize = null;
+		void function(ItemId item, FluidType type) onItemIsFluidSource = null;
+		void function(ItemId item, bool writeable) onItemIsWriteable = null;
+		void function(ItemId item, bool readable) onItemIsReadable = null;
+		void function(ItemId item, uint length) onItemHasMaxTextLength = null;
+		void function(ItemId item, cstring author) onItemHasAuthor = null;
+		void function(ItemId item, uint date) onItemHasLastEditDate = null;
+		void function(ItemId item, ItemId id) onItemHasWriteOnceId = null;
 		void function(ItemId item, ItemWareId id) onItemHasWareId = null;
 		void function(ItemId item, float price) onItemHasPrice = null;
 		void function(ItemId item, bool force) onItemHasForcedSerialization = null;
@@ -317,6 +348,102 @@ void tfsParseItemsXml(ref TfsItemsXmlParser args)
 					break;
 					case "wareid":
 						callbackIds(args.onItemHasWareId, ids, to!ItemWareId(value));
+					break;
+					case "blocksolid":
+						callbackIds(args.onItemBlocksSolid, ids, tfsBool(value));
+					break;
+					case "blockprojectile":
+						callbackIds(args.onItemBlocksProjectile, ids, tfsBool(value));
+					break;
+					case "blockpathfind":
+						callbackIds(args.onItemBlocksPathFind, ids, tfsBool(value));
+					break;
+					case "lightlevel":
+						callbackIds(args.onItemHasLightLevel, ids, to!uint(value));
+					break;
+					case "lightcolor":
+						callbackIds(args.onItemHasLightColor, ids, to!uint(value));
+					break;
+					case "description":
+						callbackIds(args.onItemHasLightDescription, ids, value.toStringz);
+					break;
+					case "runespellname":
+						callbackIds(args.onItemHasRuneSpellName, ids, value.toStringz);
+					break;
+					case "weight":
+						callbackIds(args.onItemHasWeight, ids, to!uint(value)); // oz=weight/100
+					break;
+					case "showcount":
+						callbackIds(args.onItemHasShowCount, ids, tfsBool(value));
+					break;
+					case "armor":
+						callbackIds(args.onItemHasArmor, ids, to!int(value));
+					break;
+					case "defense":
+						callbackIds(args.onItemHasDefense, ids, to!int(value));
+					break;
+					case "extradefense":
+						callbackIds(args.onItemHasExtraDefense, ids, to!int(value));
+					break;
+					case "attack":
+						callbackIds(args.onItemHasAttack, ids, to!int(value));
+					break;
+					case "extraattack":
+						callbackIds(args.onItemHasExtraAttack, ids, to!int(value));
+					break;
+					case "attackspeed":
+						callbackIds(args.onItemHasAttackSpeed, ids, to!int(value));
+					break;
+					case "rotateto":
+						callbackIds(args.onItemHasRotateTo, ids, to!int(value));
+					break;
+					case "movable":
+						callbackIds(args.onItemIsMovable, ids, tfsBool(value));
+					break;
+					case "vertical":
+						callbackIds(args.onItemIsVertical, ids, tfsBool(value));
+					break;
+					case "horizontal":
+						callbackIds(args.onItemIsHorizontal, ids, tfsBool(value));
+					break;
+					case "pickupable":
+						callbackIds(args.onItemIsPickupable, ids, tfsBool(value));
+					break;
+					case "allowpickupable":
+						callbackIds(args.onItemIsAllowedToPickUp, ids, tfsBool(value));
+					break;
+					case "floorchange":
+						callbackIds(args.onItemHasFloorChange, ids, to!FloorChange(value.capitalize));
+					break;
+					case "corpsetype":
+						callbackIds(args.onItemHasCorpseType, ids, to!CorpseType(value.capitalize));
+					break;
+					case "containersize":
+						callbackIds(args.onItemHasContainerSize, ids, to!uint(value));
+					break;
+					case "fluidsource":
+						callbackIds(args.onItemIsFluidSource, ids, to!FluidType(value.capitalize));
+					break;
+					case "writeable":
+						callbackIds(args.onItemIsWriteable, ids, tfsBool(value));
+					break;
+					case "readable":
+						callbackIds(args.onItemIsReadable, ids, tfsBool(value));
+					break;
+					case "maxtextlength":
+						callbackIds(args.onItemHasMaxTextLength, ids, to!uint(value));
+					break;
+					case "text":
+						callbackIds(args.onItemHasText, ids, value.toStringz);
+					break;
+					case "author":
+						callbackIds(args.onItemHasAuthor, ids, value.toStringz);
+					break;
+					case "date":
+						callbackIds(args.onItemHasLastEditDate, ids, to!uint(value));
+					break;
+					case "writeonceitemid":
+						callbackIds(args.onItemHasWriteOnceId, ids, to!ItemId(value));
 					break;
 					case "worth":
 						callbackIds(args.onItemHasPrice, ids, to!float(value));

@@ -239,7 +239,8 @@ enum CombatCondition
 	Death,
 }
 
-enum Direction {
+enum Direction
+{
 	Undefined = 0,
 	North,
 	East,
@@ -249,4 +250,52 @@ enum Direction {
 	Southeast,
 	Northwest,
 	Northeast,
+}
+
+enum FloorChange
+{
+	Undefined = 0,
+	Down,
+	North,
+	South,
+	West,
+	East,
+	Northex,
+	Southex,
+	Westex,
+	Eastex,
+}
+
+enum CorpseType
+{
+	Undefined = 0,
+	Venom,
+	Blood,
+	Undead,
+	Fire,
+	Energy,
+}
+
+enum FluidType
+{
+	None = 0,
+	Water,
+	Blood,
+	Beer,
+	Slime,
+	Lemonade,
+	Milk,
+	Mana,
+	Life,
+	Oil,
+	Urine,
+	Coconutmilk,
+	Wine,
+	Mud,
+	Fruitjuice,
+	Lava,
+	Rum,
+	Swamp,
+	Tea,
+	Mead,
 }
