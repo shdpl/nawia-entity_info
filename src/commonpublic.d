@@ -1,3 +1,8 @@
+/**
+ * Authors: Nawia Team <development@nawia.net>
+ * License: GNU Lesser General Public License
+ * Todo: Replace semi-c API with D API + C-bindings
+ */
 module commonpublic;
 
 alias uint ItemId;

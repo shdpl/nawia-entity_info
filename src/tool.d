@@ -1,3 +1,8 @@
+/**
+ * Authors: Nawia Team <development@nawia.net>
+ * License: GNU Lesser General Public License
+ * Todo: Replace semi-c API with D API + C-bindings
+ */
 module tool;
 import rme;
 
@@ -17,7 +22,18 @@ static string[][ItemId] items;
 
 auto keystore(A...)(ItemId id, A args)
 {
-	items[id] ~= text(args);
+	foreach( i,arg; args )
+	{
+		if( 0 == i )
+		{
+			items[id] ~= "";
+		}
+		items[id][$-1] ~= to!string(arg);
+		if( i < args.length-1 )
+		{
+			items[id][i] ~= " ";
+		}
+	}
 }
 
 brush_t[][brush_t] can_border;
@@ -175,9 +191,40 @@ auto parseRme(string path)
 
 auto parseTfs(string tfs_path)
 {
-	TfsItemsXmlParser params;
-	params.content = readText(buildPath(tfs_path,"items/items.xml")).toStringz;
-	tfsParseItemsXml(params);
+	TfsParser params;
+	/*
+	auto xml = &params.items_xml;
+	xml.onItemHasName = (ItemId item, cstring name)
+	{
+		keystore(item,"has name",name);
+	};
+	xml.onItemHasSuffix = (ItemId item,cstring suffix)
+	{
+		keystore(item,"has suffix",suffix);
+	};
+	xml.onItemHasAid = (ItemId item, ItemAid aid)
+	{
+		keystore(item,"has action id",aid);
+	};*/
+	// ...
+	auto otb = &params.items_otb;
+	otb.onItemHasName = (ItemId item,cstring name)
+	{
+		keystore(item,"has name",name);
+	};
+	otb.onItemInGroup = (ItemId item,cstring group)
+	{
+		keystore(item,"belongs to group",group);
+	};
+	otb.onItemIsVertical = (ItemId item,bool)
+	{
+		keystore(item,"is vertically aligned");
+	};
+	otb.onItemIsHorizontal = (ItemId item,bool)
+	{
+		keystore(item,"is horizontally aligned");
+	};
+	tfsParse(tfs_path.toStringz,params);
 }
 
 void main(string[] args)
@@ -193,7 +240,7 @@ void main(string[] args)
 	enforce( rme_path != string.init && tfs_path != string.init,
 		"Usage: executable --tfs=/my/path/to/tfs/data --rme=/my/path/to/rme/data/version" );
 
-	parseRme(rme_path);
+	//parseRme(rme_path);
 	parseTfs(tfs_path);
 
 	foreach( k,v; items )

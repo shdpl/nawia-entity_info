@@ -1,16 +1,22 @@
+/**
+ * Authors: Nawia Team <development@nawia.net>
+ * License: GNU Lesser General Public License
+ * Todo: Replace semi-c API with D API + C-bindings
+ */
 module tfs;
 
 private {
 	import std.conv : to,toStringz;
-	import std.file : readText,read;
+	import std.file : read;
 	import std.exception : enforce;
 	import std.xml : check,DocumentParser,ElementParser;
 	import std.range : iota;
 	import std.algorithm : filter,array;
 	import std.string : toLower,capitalize;
 	import std.typecons : Nullable;
+	import std.path : buildPath;
 
-//	import otbm.otb;
+	import otbm.otb;
 }
 public {
 	import commonpublic;
@@ -21,8 +27,7 @@ extern(C)
 {
 	struct TfsItemsXmlParser
 	{
-		cstring content;
-		void function(ItemId item, cstring name) onItemHasName = null;
+		mixin FunctionsCommon;
 		void function(ItemId item, cstring suffix) onItemHasSuffix = null;
 		void function(ItemId item, ItemAid action) onItemHasAid = null;
 		void function(ItemId item, ItemUid unique) onItemHasUid = null;
@@ -31,13 +36,7 @@ extern(C)
 		void function(ItemId item, cstring article) onItemHasArticle = null;
 		void function(ItemId item, cstring plural) onItemHasPlural = null;
 		void function(ItemId item, commonpublic.ItemType type) onItemHasType = null; //?
-		void function(ItemId item, ItemClientId item) onItemHasClientId = null;
 		void function(ItemId item, bool cacheable) onItemIsCacheable = null;
-		void function(ItemId item, bool blocks) onItemBlocksSolid = null;
-		void function(ItemId item, bool blocks) onItemBlocksProjectile = null;
-		void function(ItemId item, bool blocks) onItemBlocksPathFind = null;
-		void function(ItemId item, uint strength) onItemHasLightLevel = null;
-		void function(ItemId item, uint color) onItemHasLightColor = null;
 		void function(ItemId item, cstring description) onItemHasLightDescription = null;
 		void function(ItemId item, cstring name) onItemHasRuneSpellName = null;
 		/// oz = weight/100
@@ -50,17 +49,11 @@ extern(C)
 		void function(ItemId item, int extraatk) onItemHasExtraAttack = null;
 		void function(ItemId item, int speed) onItemHasAttackSpeed = null;
 		void function(ItemId item, int rotate) onItemHasRotateTo = null;
-		void function(ItemId item, bool movable) onItemIsMovable = null;
-		void function(ItemId item, bool vertical) onItemIsVertical = null;
-		void function(ItemId item, bool horizontal) onItemIsHorizontal = null;
-		void function(ItemId item, bool pickupable) onItemIsPickupable = null;
 		void function(ItemId item, bool allow) onItemIsAllowedToPickUp = null;
-		void function(ItemId item, FloorChange change) onItemHasFloorChange = null;
 		void function(ItemId item, CorpseType type) onItemHasCorpseType = null;
 		void function(ItemId item, uint size) onItemHasContainerSize = null;
 		void function(ItemId item, FluidType type) onItemIsFluidSource = null;
 		void function(ItemId item, bool writeable) onItemIsWriteable = null;
-		void function(ItemId item, bool readable) onItemIsReadable = null;
 		void function(ItemId item, uint length) onItemHasMaxTextLength = null;
 		void function(ItemId item, cstring author) onItemHasAuthor = null;
 		void function(ItemId item, uint date) onItemHasLastEditDate = null;
@@ -176,48 +169,73 @@ extern(C)
 //		void function(ItemId item, CorpseType type) onItemHasCorpseType = null;
 	}
 
+	private mixin template FunctionsCommon()
+	{
+		void function(ItemId item, cstring name) onItemHasName = null;
+		void function(ItemId item, bool vertical) onItemIsVertical = null;
+		void function(ItemId item, bool horizontal) onItemIsHorizontal = null;
+		void function(ItemId item, bool pickupable) onItemIsPickupable = null;
+		void function(ItemId item, bool blocks) onItemBlocksSolid = null;
+		void function(ItemId item, bool blocks) onItemBlocksProjectile = null;
+		void function(ItemId item, bool blocks) onItemBlocksPathFind = null;
+		void function(ItemId item, ushort strength) onItemHasLightLevel = null;
+		void function(ItemId item, ushort color) onItemHasLightColor = null;
+		void function(ItemId item, bool movable) onItemIsMovable = null;
+		void function(ItemId item, FloorChange change) onItemHasFloorChange = null;
+		void function(ItemId item, bool readable) onItemIsReadable = null;
+		void function(ItemId item, ItemClientId item) onItemHasClientId = null;
+	}
+
 	struct TfsItemsOtbParser
 	{
-		cstring content;
-		void function(ItemId item, cstring name) onItemHasName = null;
+		mixin FunctionsCommon;
 		void function(ItemId item, cstring group) onItemInGroup = null;
-		void function(ItemId item, EdgeAlignment alignment) onItemIsEdge = null;
+		void function(ItemId item, bool has) onItemHasHeight = null;
+		void function(ItemId item, bool usable) onItemIsUsable = null;
+		void function(ItemId item, bool stackable) onItemIsStackable = null;
+		void function(ItemId item, bool always) onItemIsAlwaysOnTop = null;
+		void function(ItemId item, bool rotable) onItemIsRotable = null;
+		void function(ItemId item, bool hangable) onItemIsHangable = null;
+		void function(ItemId item, bool nodecay) onItemCannotDecay = null;
+		void function(ItemId item, bool readable) onItemCanBeReadFromDistance = null;
+		void function(ItemId item, bool chargable) onItemCanHaveCharges = null;
+		void function(ItemId item, bool translucent) onItemHasLookThrough = null;
+		void function(ItemId item, bool animatable) onItemHasAnimation = null;
+		void function(ItemId item, bool walkstack) onItemCanHaveWalkstack = null;
+		void function(ItemId item, ubyte index) onItemHasTopOrder = null;
+		void function(ItemId item, ubyte[16] hash) onItemHasHash = null;
+		void function(ItemId item, ushort color) onItemHasMiniMapColor = null;
 	}
 
 	struct TfsParser
 	{
-		cstring data_path;
-		cstring items_xml_path;
-		cstring items_otb_path;
+		TfsItemsXmlParser items_xml;
+		TfsItemsOtbParser items_otb;
 	}
 
-	void tfsParse(ref TfsParser args)
+	void tfsParse(cstring data_path, ref TfsParser args)
 	{
-		auto dir = to!string(args.data_path);
-		enforce(args.data_path);
-		if( args.items_xml_path !is null )
+		enforce(data_path, "No valid TFS data path given");
+		auto dir = to!string(data_path);
+
 		{
-			auto file = dir~to!string(args.items_xml_path);
-			auto text = readText(file).toStringz;
-			auto args2= TfsItemsXmlParser(text);
-			tfsParseItemsXml(args2);
+			auto file = buildPath(dir,"items","items.xml");
+			auto content = read(file);
+			tfsParseItemsXml(content.ptr,to!uint(content.length),args.items_xml);
 		}
-		/*
-		if( args.items_otb_path !is null )
 		{
-			auto file = dir~to!string(args.items_otb_path);
-			auto text = readText(file).toStringz;
-			auto args2= TfsItemsOtbParser(text);
-			tfsParseItemsOtb(args2);
-		}*/
+			auto file = buildPath(dir,"items","items.otb");
+			auto content = read(file);
+			tfsParseItemsOtb(content.ptr,to!uint(content.length),args.items_otb);
+		}
 	}
 }
 
-void tfsParseItemsXml(ref TfsItemsXmlParser args)
+void tfsParseItemsXml(void* data, uint data_n,ref TfsItemsXmlParser args)
 {
 		//item id="1492" name="" editorsuffix=" (Non PvP)"
-			//attribute key="type" value="magicfield"
-		auto str = to!string(args.content);
+		// attribute key="type" value="magicfield"
+		auto str = to!string(cast(char[])data[0..data_n]);
 		//check(str);
 		auto xml = new DocumentParser(str);
 		xml.onStartTag["item"] = (ElementParser xml)
@@ -359,10 +377,10 @@ void tfsParseItemsXml(ref TfsItemsXmlParser args)
 						callbackIds(args.onItemBlocksPathFind, ids, tfsBool(value));
 					break;
 					case "lightlevel":
-						callbackIds(args.onItemHasLightLevel, ids, to!uint(value));
+						callbackIds(args.onItemHasLightLevel, ids, to!ushort(value));
 					break;
 					case "lightcolor":
-						callbackIds(args.onItemHasLightColor, ids, to!uint(value));
+						callbackIds(args.onItemHasLightColor, ids, to!ushort(value));
 					break;
 					case "description":
 						callbackIds(args.onItemHasLightDescription, ids, value.toStringz);
@@ -710,10 +728,11 @@ void tfsParseItemsXml(ref TfsItemsXmlParser args)
 		xml.parse();
 }
 
-	/*
-void tfsParseItemsOtb(ref TfsItemsOtbParser args)
+void tfsParseItemsOtb(void* data, uint data_n, ref TfsItemsOtbParser outer)
 {
+	static TfsItemsOtbParser* args = null;
 	ParserOTB parser;
+	args = &outer;
 	parser.onItemType = (otbm.otb.ItemType item)
 	{
 		auto id = to!ItemId(to!string(item.serverId));
@@ -725,114 +744,130 @@ void tfsParseItemsOtb(ref TfsItemsOtbParser args)
 		{
 			callback(args.onItemInGroup, id, to!string(item.group).toLower.toStringz);
 		}
-
-		if( item.flags.Horizontal )
-		{
-			callback(args.onItemIsEdge, id, EdgeAlignment.Horizontal);
+		{ //flags
+			if( item.flags.Horizontal )
+			{
+				callback(args.onItemIsHorizontal, id, true);
+			}
+			else if( item.flags.Vertical )
+			{
+				callback(args.onItemIsVertical, id, true);
+			}
+			if( item.flags.BlockSolid )
+			{
+				callback(args.onItemBlocksSolid,id,true);
+			}
+			if( item.flags.BlockProjectile )
+			{
+				callback(args.onItemBlocksProjectile,id,true);
+			}
+			if( item.flags.BlockPathFind )
+			{
+				callback(args.onItemBlocksPathFind,id,true);
+			}
+			if( item.flags.HasHeight )
+			{
+				callback(args.onItemHasHeight,id,true);
+			}
+			if( item.flags.Usable )
+			{
+				callback(args.onItemIsUsable,id,true);
+			}
+			if( item.flags.Pickupable )
+			{
+				callback(args.onItemIsPickupable,id,true);
+			}
+			if( item.flags.Movable )
+			{
+				callback(args.onItemIsMovable,id,true);
+			}
+			if( item.flags.Stackable )
+			{
+				callback(args.onItemIsStackable,id,true);
+			}
+			if( item.flags.FloorChangeDown )
+			{
+				callback(args.onItemHasFloorChange,id,FloorChange.Down);
+			}
+			if( item.flags.FloorChangeNorth )
+			{
+				callback(args.onItemHasFloorChange,id,FloorChange.North);
+			}
+			if( item.flags.FloorChangeEast )
+			{
+				callback(args.onItemHasFloorChange,id,FloorChange.East);
+			}
+			if( item.flags.FloorChangeSouth )
+			{
+				callback(args.onItemHasFloorChange,id,FloorChange.South);
+			}
+			if( item.flags.FloorChangeWest )
+			{
+				callback(args.onItemHasFloorChange,id,FloorChange.West);
+			}
+			if( item.flags.AlwaysOnTop )
+			{
+				callback(args.onItemIsAlwaysOnTop,id,true);
+			}
+			if( item.flags.Readable )
+			{
+				callback(args.onItemIsReadable,id,true);
+			}
+			if( item.flags.Rotable )
+			{
+				callback(args.onItemIsRotable,id,true);
+			}
+			if( item.flags.Hangable )
+			{
+				callback(args.onItemIsHangable,id,true);
+			}
+			if( item.flags.CannotDecay )
+			{
+				callback(args.onItemCannotDecay,id,true);
+			}
+			if( item.flags.AllowDistRead )
+			{
+				callback(args.onItemCanBeReadFromDistance,id,true);
+			}
+			if( item.flags.Unused )
+			{
+				// maybe notify?
+			}
+			if( item.flags.ClientCharges )
+			{
+				callback(args.onItemCanHaveCharges,id,true);//!=HasCharges
+			}
+			if( item.flags.LookThrough )
+			{
+				callback(args.onItemHasLookThrough,id,true);
+			}
+			if( item.flags.Animation )
+			{
+				callback(args.onItemHasAnimation,id,true);
+			}
+			if( item.flags.WalkStack )
+			{
+				callback(args.onItemCanHaveWalkstack,id,true);
+			}
 		}
-		else if( item.flags.Vertical )
+		if( item.clientId )
 		{
-			callback(args.onItemIsEdge, id, EdgeAlignment.Vertical);
+			callback(args.onItemHasClientId,id,item.clientId);
 		}
-		/*
-
-		if( item.flags.BlockSolid )
+		if( item.light2.level )
 		{
-			db.addRelation(id, "flag", "BlockSolid");
+			callback(args.onItemHasLightLevel,id,item.light2.level);
+			callback(args.onItemHasLightColor,id,item.light2.color);
 		}
-		if( item.flags.BlockProjectile )
+		if( item.topOrder )
 		{
-			db.addRelation(id, "flag", "BlockProjectile");
+			callback(args.onItemHasTopOrder,id,item.topOrder);
 		}
-		if( item.flags.BlockPathFind )
+		callback(args.onItemHasHash,id,item.hash);
+		if( item.miniMapColor )
 		{
-			db.addRelation(id, "flag", "BlockPathFind");
-		}
-		if( item.flags.HasHeight )
-		{
-			db.addRelation(id, "flag", "HasHeight");
-		}
-		if( item.flags.Usable )
-		{
-			db.addRelation(id, "flag", "Usable");
-		}
-		if( item.flags.Pickupable )
-		{
-			db.addRelation(id, "flag", "Pickupable");
-		}
-		if( item.flags.Movable )
-		{
-			db.addRelation(id, "flag", "Movable");
-		}
-		if( item.flags.Stackable )
-		{
-			db.addRelation(id, "flag", "Stackable");
-		}
-		if( item.flags.FloorChangeDown )
-		{
-			db.addRelation(id, "flag", "FloorChangeDown");
-		}
-		if( item.flags.FloorChangeNorth )
-		{
-			db.addRelation(id, "flag", "FloorChangeNorth");
-		}
-		if( item.flags.FloorChangeEast )
-		{
-			db.addRelation(id, "flag", "FloorChangeEast");
-		}
-		if( item.flags.FloorChangeSouth )
-		{
-			db.addRelation(id, "flag", "FloorChangeSouth");
-		}
-		if( item.flags.FloorChangeWest )
-		{
-			db.addRelation(id, "flag", "FloorChangeWest");
-		}
-		if( item.flags.AlwaysOnTop )
-		{
-			db.addRelation(id, "flag", "AlwaysOnTop");
-		}
-		if( item.flags.Readable )
-		{
-			db.addRelation(id, "flag", "Readable");
-		}
-		if( item.flags.Rotable )
-		{
-			db.addRelation(id, "flag", "Rotable");
-		}
-		if( item.flags.Hangable )
-		{
-			db.addRelation(id, "flag", "Hangable");
-		}
-		if( item.flags.CannotDecay )
-		{
-			db.addRelation(id, "flag", "CannotDecay");
-		}
-		if( item.flags.AllowDistRead )
-		{
-			db.addRelation(id, "flag", "AllowDistRead");
-		}
-		if( item.flags.Unused )
-		{
-			db.addRelation(id, "flag", "Unused");
-		}
-		if( item.flags.ClientCharges )
-		{
-			db.addRelation(id, "flag", "ClientCharges");
-		}
-		if( item.flags.LookThrough )
-		{
-			db.addRelation(id, "flag", "LookThrough");
-		}
-		if( item.flags.Animation )
-		{
-			db.addRelation(id, "flag", "Animation");
-		}
-		if( item.flags.WalkStack )
-		{
-			db.addRelation(id, "flag", "WalkStack");
+			callback(args.onItemHasMiniMapColor,id,item.miniMapColor);
 		}
 	};
-	parser.parse(args.content);
+	parser.parse(data[0..data_n]);
 }
-	*/
